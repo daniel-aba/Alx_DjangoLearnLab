@@ -37,7 +37,8 @@ def run_queries():
         print(f"- {book.title}")
 
     # List all books in a library
-    central_library = Library.objects.get(name="Central Library")
+    library_name = "Central Library"
+    central_library = Library.objects.get(name=library_name)
     print(f"\nBooks in {central_library.name}:")
     for book in central_library.books.all():
         print(f"- {book.title}")
