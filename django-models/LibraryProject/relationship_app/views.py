@@ -1,4 +1,4 @@
-# This is a test change to trigger git status
+# This is a test change to trigger another git status
 
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView
