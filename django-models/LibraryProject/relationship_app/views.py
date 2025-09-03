@@ -1,3 +1,5 @@
+# This is a test change to trigger git status
+
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView
 from .models import Book, Library
