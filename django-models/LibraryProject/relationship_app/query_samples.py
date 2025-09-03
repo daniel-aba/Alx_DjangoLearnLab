@@ -31,9 +31,11 @@ def run_queries():
     print("--- Sample Queries ---")
 
     # Query all books by a specific author
-    king_books = Book.objects.filter(author__name="Stephen King")
-    print("Books by Stephen King:")
-    for book in king_books:
+    author_name = "Stephen King"
+    author = Author.objects.get(name=author_name)
+    books_by_author = Book.objects.filter(author=author)
+    print(f"Books by {author.name}:")
+    for book in books_by_author:
         print(f"- {book.title}")
 
     # List all books in a library
