@@ -1,3 +1,4 @@
+# Test
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -18,8 +19,8 @@ class Author(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    isbn = models.CharField(max_length=13, null=True, unique=True)
+    author = models.CharField(max_length=100)
+    isbn = models.CharField(max_length=13, unique=True, null=True, blank=True)
     publisher = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
@@ -27,9 +28,9 @@ class Book(models.Model):
 
     class Meta:
         permissions = [
-            ("can_read_book", "Can read book"),
-            ("can_edit_book", "Can edit book"),
-            ("can_delete_book", "Can delete book"),
+            ("can_add_book", "Can add a new book"),
+            ("can_change_book", "Can change an existing book"),
+            ("can_delete_book", "Can delete a book"),
         ]
 
 class Library(models.Model):
