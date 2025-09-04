@@ -1,12 +1,11 @@
 # This is a test change to trigger another git status
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic.detail import DetailView
+from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
-from .models import Book, Library
-from .forms import UserRegisterForm
 
 
 # Implement Function-based View
@@ -25,15 +24,14 @@ class LibraryDetailView(DetailView):
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
 
-# New code to be added
 def register(request):
     if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}! You can now log in.')
-            return redirect('login')
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Registration successful. You are now logged in.')
+            return redirect('login') # or any other page, like a home page
     else:
-        form = UserRegisterForm()
+        form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
