@@ -1,4 +1,4 @@
-# relationship_app/forms.py
+# django-models/relationship_app/forms.py
 from django.contrib.auth.forms import UserCreationForm
 
 class UserRegisterForm(UserCreationForm):
