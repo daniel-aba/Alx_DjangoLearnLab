@@ -1,12 +1,28 @@
+# bookshelf/admin.py
 from django.contrib import admin
-from .models import Book
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import CustomUser
 
-# Register the Book model to make it visible in the admin interface
-class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'publication_year')
-    list_filter = ('publication_year', 'author')
-    search_fields = ('title', 'author')
+class CustomUserAdmin(BaseUserAdmin):
+    # The forms to add and change user instances
+    list_display = ('email', 'is_staff', 'is_superuser', 'date_of_birth')
+    
+    # Change the ordering from 'username' to 'email'
+    ordering = ('email',)
+    
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('date_of_birth', 'profile_photo')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                   'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password', 'password2'),
+        }),
+    )
 
-# Unregister the default registration (if you had it) and register the model with the custom admin class
-# admin.site.unregister(Book) # Use this if you want to be extra careful, but it's not needed if you only register once
-admin.site.register(Book, BookAdmin)
+# Register the CustomUser model with the custom admin class
+admin.site.register(CustomUser, CustomUserAdmin)
