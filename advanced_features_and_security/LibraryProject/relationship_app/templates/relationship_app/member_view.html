@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container text-center mt-5">
+        <h1>Member View</h1>
+        <p>Welcome, Member! This page is accessible to all members.</p>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+{% endblock %}

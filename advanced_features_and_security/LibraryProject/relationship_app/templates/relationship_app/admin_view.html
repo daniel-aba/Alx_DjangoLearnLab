@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container text-center mt-5">
+        <h1>Admin View</h1>
+        <p>Welcome, Admin! This page is for your eyes only.</p>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+{% endblock %}
