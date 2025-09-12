@@ -20,12 +20,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&zyjr)*gcs14y=*c!^to1kicrvz$+#h1wwooo))k$xfjpx_zp@'
+SECRET_KEY = 'your-secret-key-here'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# A crucial setting for production environments.
+# DEBUG should be False in production to prevent sensitive information from being exposed.
+# In development, it should be True for debugging.
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# Secure settings for production environment
+# These settings protect against common security vulnerabilities.
+# Note: For local development, you might need to set CSRF_COOKIE_SECURE and SESSION_COOKIE_SECURE to False.
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 
 # Application definition
@@ -39,9 +51,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookshelf.apps.BookshelfConfig',
     'relationship_app',
+    'csp', # Add the csp app here after installing it
 ]
 
 MIDDLEWARE = [
+    'csp.middleware.CSPMiddleware', # ADD THIS LINE AT THE TOP
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -126,7 +140,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # django-models/LibraryProject/settings.py
 # ... at the bottom of the file
 
-LOGIN_REDIRECT_URL = '/'  # Redirects to home page after login
+LOGIN_REDIRECT_URL = '/' # Redirects to home page after login
 LOGOUT_REDIRECT_URL = '/login/' # Redirects to login page after logout
 
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
+
+# Configure your CSP headers.
+# This is a basic example that allows content only from your own domain.
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'") # Add 'unsafe-inline' if you have inline styles
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_IMG_SRC = ("'self'",)
+# CSP_REPORT_URI = ('/your-csp-report-url/',) # Optional: sends reports of policy violations
