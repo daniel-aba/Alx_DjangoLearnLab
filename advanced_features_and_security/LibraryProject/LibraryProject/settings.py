@@ -144,6 +144,9 @@ CSP_IMG_SRC = ("'self'",)
 # CSP_REPORT_URI = ('/your-csp-report-url/',) # Optional: sends reports of policy violations"
 
 ##   *** Security Settings for HTTPS and Secure Headers ***## 
+
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Step 1: Configure Django for HTTPS Support
 # Redirect all non-HTTPS requests to HTTPS. This is crucial for enforcing secure connections.
 SECURE_SSL_REDIRECT = True
