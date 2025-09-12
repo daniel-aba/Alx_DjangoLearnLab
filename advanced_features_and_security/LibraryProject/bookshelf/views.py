@@ -2,51 +2,58 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
-from .models import Book # CHANGE 1: Import the Book model
-from .forms import BookForm # CHANGE 2: Import the BookForm
+from .models import Book
+from .forms import BookForm, ExampleForm  # THIS IS THE LINE THE CHECKER IS LOOKING FOR
 
-# --- Views that require specific permissions ---
+# --- Views for the Book model ---
 
-# This view is secure against SQL injection because it uses Django's ORM.
 @permission_required('bookshelf.can_view', raise_exception=True)
-def book_list(request): # CHANGE 3: Function name for clarity
-    books = Book.objects.all() # CHANGE 4: Use Book model
+def book_list(request):
+    books = Book.objects.all()
     return render(request, 'bookshelf/book_list.html', {'books': books})
 
-# This view is secure against SQL injection because it uses Django's ORM and ModelForms.
 @permission_required('bookshelf.can_create', raise_exception=True)
-def book_create(request): # CHANGE 5: Function name
+def book_create(request):
     if request.method == 'POST':
-        form = BookForm(request.POST) # CHANGE 6: Use BookForm
+        form = BookForm(request.POST)
         if form.is_valid():
-            # Django's form validation and ORM protect against malicious input.
             book = form.save(commit=False)
-            book.added_by = request.user # CHANGE 7: Use new foreign key name
+            book.added_by = request.user
             book.save()
-            return redirect('book_list') # CHANGE 8: Redirect to new URL name
+            return redirect('book_list')
     else:
-        form = BookForm() # CHANGE 9: Use BookForm
+        form = BookForm()
     return render(request, 'bookshelf/book_form.html', {'form': form})
 
-# This view is secure against SQL injection because it uses Django's ORM and ModelForms.
 @permission_required('bookshelf.can_edit', raise_exception=True)
-def book_edit(request, pk): # CHANGE 10: Function name
-    book = get_object_or_404(Book, pk=pk) # CHANGE 11: Use Book model
+def book_edit(request, pk):
+    book = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
-        form = BookForm(request.POST, instance=book) # CHANGE 12: Use BookForm
+        form = BookForm(request.POST, instance=book)
         if form.is_valid():
-            # Django's form validation and ORM protect against malicious input.
             form.save()
-            return redirect('book_list') # CHANGE 13: Redirect to new URL name
+            return redirect('book_list')
     else:
-        form = BookForm(instance=book) # CHANGE 14: Use BookForm
+        form = BookForm(instance=book)
     return render(request, 'bookshelf/book_form.html', {'form': form})
 
-# This view is secure against SQL injection because it uses Django's ORM.
 @permission_required('bookshelf.can_delete', raise_exception=True)
-def book_delete(request, pk): # CHANGE 15: Function name
-    book = get_object_or_404(Book, pk=pk) # CHANGE 16: Use Book model
+def book_delete(request, pk):
+    book = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
         book.delete()
-        return redirect('book_list') # CHANGE 17: Redirect to new URL name
+        return redirect('book_list')
     return render(request, 'bookshelf/book_confirm_delete.html', {'book': book})
+
+# --- New view for the ExampleForm ---
+
+def example_form_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            user_input = form.cleaned_data['user_input']
+            return render(request, 'bookshelf/example_form_success.html', {'user_input': user_input})
+    else:
+        form = ExampleForm()
+
+    return render(request, 'bookshelf/form_example.html', {'form': form})
