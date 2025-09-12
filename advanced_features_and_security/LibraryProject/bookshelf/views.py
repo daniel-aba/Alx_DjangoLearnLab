@@ -2,45 +2,45 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
-from .models import Article
-from .forms import ArticleForm
+from .models import Book # CHANGE 1: Import the Book model
+from .forms import BookForm # CHANGE 2: Import the BookForm
 
 # --- Views that require specific permissions ---
 
 @permission_required('bookshelf.can_view', raise_exception=True)
-def article_list(request):
-    articles = Article.objects.all()
-    return render(request, 'bookshelf/article_list.html', {'articles': articles})
+def book_list(request): # CHANGE 3: Function name for clarity
+    books = Book.objects.all() # CHANGE 4: Use Book model
+    return render(request, 'bookshelf/book_list.html', {'books': books})
 
 @permission_required('bookshelf.can_create', raise_exception=True)
-def article_create(request):
+def book_create(request): # CHANGE 5: Function name
     if request.method == 'POST':
-        form = ArticleForm(request.POST)
+        form = BookForm(request.POST) # CHANGE 6: Use BookForm
         if form.is_valid():
-            article = form.save(commit=False)
-            article.author = request.user
-            article.save()
-            return redirect('article_list')
+            book = form.save(commit=False)
+            book.added_by = request.user # CHANGE 7: Use new foreign key name
+            book.save()
+            return redirect('book_list') # CHANGE 8: Redirect to new URL name
     else:
-        form = ArticleForm()
-    return render(request, 'bookshelf/article_form.html', {'form': form})
+        form = BookForm() # CHANGE 9: Use BookForm
+    return render(request, 'bookshelf/book_form.html', {'form': form})
 
 @permission_required('bookshelf.can_edit', raise_exception=True)
-def article_edit(request, pk):
-    article = get_object_or_404(Article, pk=pk)
+def book_edit(request, pk): # CHANGE 10: Function name
+    book = get_object_or_404(Book, pk=pk) # CHANGE 11: Use Book model
     if request.method == 'POST':
-        form = ArticleForm(request.POST, instance=article)
+        form = BookForm(request.POST, instance=book) # CHANGE 12: Use BookForm
         if form.is_valid():
             form.save()
-            return redirect('article_list')
+            return redirect('book_list') # CHANGE 13: Redirect to new URL name
     else:
-        form = ArticleForm(instance=article)
-    return render(request, 'bookshelf/article_form.html', {'form': form})
+        form = BookForm(instance=book) # CHANGE 14: Use BookForm
+    return render(request, 'bookshelf/book_form.html', {'form': form})
 
 @permission_required('bookshelf.can_delete', raise_exception=True)
-def article_delete(request, pk):
-    article = get_object_or_404(Article, pk=pk)
+def book_delete(request, pk): # CHANGE 15: Function name
+    book = get_object_or_404(Book, pk=pk) # CHANGE 16: Use Book model
     if request.method == 'POST':
-        article.delete()
-        return redirect('article_list')
-    return render(request, 'bookshelf/article_confirm_delete.html', {'article': article})
+        book.delete()
+        return redirect('book_list') # CHANGE 17: Redirect to new URL name
+    return render(request, 'bookshelf/book_confirm_delete.html', {'book': book})

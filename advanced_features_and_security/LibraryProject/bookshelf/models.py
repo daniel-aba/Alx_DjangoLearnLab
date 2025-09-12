@@ -1,8 +1,9 @@
 # bookshelf/models.py
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings 
+from django.conf import settings # Ensure this import is present
 
 class CustomUserManager(BaseUserManager):
     """
@@ -42,18 +43,19 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
-    
-class Article(models.Model):
+
+class Book(models.Model):
     title = models.CharField(max_length=200)
-    content = models.TextField()
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author_name = models.CharField(max_length=200)
+    published_date = models.DateField()
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         permissions = [
-            ("can_view", "Can view article"),
-            ("can_create", "Can create article"),
-            ("can_edit", "Can edit article"),
-            ("can_delete", "Can delete article"),
+            ("can_view", "Can view book"),
+            ("can_create", "Can create book"),
+            ("can_edit", "Can edit book"),
+            ("can_delete", "Can delete book"),
         ]
 
     def __str__(self):
