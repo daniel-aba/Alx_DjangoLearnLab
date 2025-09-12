@@ -30,16 +30,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Secure settings for production environment
-# These settings protect against common security vulnerabilities.
-# Note: For local development, you might need to set CSRF_COOKIE_SECURE and SESSION_COOKIE_SECURE to False.
-SECURE_BROWSER_XSS_FILTER = True
-X_FRAME_OPTIONS = 'DENY'
-SECURE_CONTENT_TYPE_NOSNIFF = True
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -151,4 +141,31 @@ CSP_DEFAULT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'") # Add 'unsafe-inline' if you have inline styles
 CSP_SCRIPT_SRC = ("'self'",)
 CSP_IMG_SRC = ("'self'",)
-# CSP_REPORT_URI = ('/your-csp-report-url/',) # Optional: sends reports of policy violations
+# CSP_REPORT_URI = ('/your-csp-report-url/',) # Optional: sends reports of policy violations"
+
+##   *** Security Settings for HTTPS and Secure Headers ***## 
+# Step 1: Configure Django for HTTPS Support
+# Redirect all non-HTTPS requests to HTTPS. This is crucial for enforcing secure connections.
+SECURE_SSL_REDIRECT = True
+# Enable HTTP Strict Transport Security (HSTS). This tells browsers to only access your site via HTTPS for a set duration.
+# The value is in seconds. 31536000 is equivalent to one year.
+SECURE_HSTS_SECONDS = 31536000
+# Include all subdomains in the HSTS policy.
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# Allow your site to be included in the HSTS preload list.
+# This requires a submission to the hstspreload.org service after your site is working.
+SECURE_HSTS_PRELOAD = True
+
+# Step 2: Enforce Secure Cookies
+# Ensure session cookies are only transmitted over HTTPS.
+SESSION_COOKIE_SECURE = True
+# Ensure CSRF cookies are only transmitted over HTTPS.
+CSRF_COOKIE_SECURE = True
+
+# Step 3: Implement Secure Headers
+# Prevent your site from being framed, protecting against clickjacking attacks.
+X_FRAME_OPTIONS = "DENY"
+# Prevent browsers from MIME-sniffing a response away from the declared content-type.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+# Enable the browser's built-in XSS filter.
+SECURE_BROWSER_XSS_FILTER = True
