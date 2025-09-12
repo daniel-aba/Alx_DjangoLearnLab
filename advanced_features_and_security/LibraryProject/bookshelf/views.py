@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import permission_required
 from .models import Book
 from .forms import BookForm, ExampleForm  # THIS IS THE CORRECT IMPORT
 
+print("Hello from views.py!")
+
 # --- Views for the Book model ---
 
 @permission_required('bookshelf.can_view', raise_exception=True)
