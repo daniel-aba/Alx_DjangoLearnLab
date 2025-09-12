@@ -1,9 +1,9 @@
-# bookshelf/views.py
+# LibraryProject/bookshelf/views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from .models import Book
-from .forms import BookForm, ExampleForm  # THIS IS THE LINE THE CHECKER IS LOOKING FOR
+from .forms import BookForm, ExampleForm  # THIS IS THE CORRECT IMPORT
 
 # --- Views for the Book model ---
 
