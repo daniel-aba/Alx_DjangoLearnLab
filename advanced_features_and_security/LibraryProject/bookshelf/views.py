@@ -3,6 +3,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from .models import Book
+from .forms import ExampleForm
 from .forms import BookForm, ExampleForm  # The checker is looking for this import.
 
 # --- Views for the Book model ---
