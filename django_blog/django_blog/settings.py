@@ -76,12 +76,12 @@ WSGI_APPLICATION = 'django_blog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django_blog_db',
-        'USER': 'your_username',      # This is the USER field the checker wants
-        'PASSWORD': 'your_password',
-        'HOST': 'localhost',
-        'PORT': '5432',               # This is the PORT field the checker wants
+        'ENGINE': 'django.db.backends.postgresql', # Specifies PostgreSQL driver
+        'NAME': 'django_blog_db',                   # ⬅️ Your PostgreSQL database name
+        'USER': 'postgres',                   # ⬅️ Your PostgreSQL username (e.g., postgres)
+        'PASSWORD': 'daniel@2025',              # ⬅️ Your PostgreSQL password
+        'HOST': 'localhost',                      # ⬅️ Or the IP address of the database server
+        'PORT': '5432',                           # ⬅️ PostgreSQL default port
     }
 }
 
