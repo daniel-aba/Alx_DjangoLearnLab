@@ -1,8 +1,12 @@
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from .models import Post # Import the Post model
 
-# Custom form to ensure email is handled during registration,
-# though Django's User model doesn't require it to be unique by default.
-class UserRegisterForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        fields = UserCreationForm.Meta.fields + ('email',)
+# (Keep your existing UserRegisterForm here)
 
+# ⬅️ NEW: Post ModelForm for creation and updating
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        # Exclude 'author' and 'published_date' as they are set automatically
+        fields = ['title', 'content']
