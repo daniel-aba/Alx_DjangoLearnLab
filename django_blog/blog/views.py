@@ -10,7 +10,7 @@ from django.views.generic import (
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin 
 from django.contrib.auth.decorators import login_required 
-from django.db.models import Q # ⬅️ NEW: Import Q object for search
+from django.db.models import Q # ⬅️ Import Q object for search
 
 from .models import Post, Comment 
 from .forms import PostForm, UserRegisterForm, CommentForm 
@@ -116,26 +116,28 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
 
 # ----------------------------------------------------
-#               TAGS AND SEARCH VIEWS (NEW)
+#               TAGS AND SEARCH VIEWS (UPDATED)
 # ----------------------------------------------------
 
-# --- NEW: Tag Filter View ---
-class TagPostListView(ListView):
+# --- NEW: Tag Filter View (RENAMED to PostByTagListView) ---
+class PostByTagListView(ListView): # ⬅️ RENAMED
     model = Post
     template_name = 'blog/post_list.html' # Use the existing list template
     context_object_name = 'posts'
     ordering = ['-published_date'] 
 
-    # Filter posts by the tag name passed in the URL
+    # Filter posts by the tag slug passed in the URL
     def get_queryset(self):
-        tag_name = self.kwargs.get('tag')
-        # Filter posts where the tags field contains the tag name
-        return Post.objects.filter(tags__name__in=[tag_name]).order_by('-published_date')
+        # ⬅️ FIX: Use 'tag_slug' as the variable name from the URL
+        tag_slug = self.kwargs.get('tag_slug') 
+        # Filter posts where the tags field contains the tag name (using __slug for better lookup)
+        return Post.objects.filter(tags__slug__in=[tag_slug]).order_by('-published_date')
 
     # Add the tag name to the context for use in the template header
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current_tag'] = self.kwargs.get('tag')
+        # ⬅️ FIX: Use 'tag_slug' in context as well (for reference)
+        context['current_tag'] = self.kwargs.get('tag_slug')
         return context
 
 # --- NEW: Search View ---
@@ -174,12 +176,3 @@ def register(request):
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}! You can now log in.')
             return redirect('login')
-    else:
-        form = UserRegisterForm()
-
-    return render(request, 'blog/register.html', {'form': form})
-
-# Profile View (Requires user to be logged in)
-@login_required 
-def profile(request):
-    return render(request, 'blog/profile.html')

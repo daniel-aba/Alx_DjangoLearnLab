@@ -6,8 +6,8 @@ from .views import (
     PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView,
     # ⬅️ Comment CBVs
     CommentCreateView, CommentUpdateView, CommentDeleteView,
-    # ⬅️ NEW: Search and Tag Views
-    TagPostListView, SearchResultsListView
+    # ⬅️ FIX: Update the import to the new view name (PostByTagListView)
+    PostByTagListView, SearchResultsListView
 )
 
 urlpatterns = [
@@ -23,8 +23,8 @@ urlpatterns = [
     path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'), 
     path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
 
-    # ⬅️ NEW: Tagging and Search URLs
-    path('tag/<str:tag>/', TagPostListView.as_view(), name='posts-by-tag'),
+    # ⬅️ FIX: Updated Tagging URL Pattern and View Name
+    path('tags/<slug:tag_slug>/', PostByTagListView.as_view(), name='posts-by-tag'),
     path('search/', SearchResultsListView.as_view(), name='search-results'),
 
     # Authentication URLs 
