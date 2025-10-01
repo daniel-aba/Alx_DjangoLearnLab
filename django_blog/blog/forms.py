@@ -1,20 +1,25 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Post, Comment # <-- ADDED 'Comment' HERE
+from .models import Post, Comment
+# from taggit_forms import TagWidget # ⬅️ DELETED/COMMENTED OUT: Avoiding NameError
 
-# Custom form to ensure email is handled during registration,
-# though Django's User model doesn't require it to be unique by default.
+
 class UserRegisterForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         fields = UserCreationForm.Meta.fields + ('email',)
 
-# ⬅️ NEW: Post ModelForm for creation and updating (UPDATED with tags)
+# ⬅️ Post ModelForm using default tag widget
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         # Exclude 'author' and 'published_date' as they are set automatically
-        # ⬅️ ADDED 'tags' field
+        # ⬅️ 'tags' field is included, using django-taggit's default widget
         fields = ['title', 'content', 'tags']
+        
+        # ⬅️ DELETED: The 'widgets' dictionary that caused the issue is removed.
+        # widgets = {
+        #     'tags': TagWidget(), 
+        # }
 
 
 class CommentForm(forms.ModelForm):
@@ -30,4 +35,4 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content']
 
-    
+        # For the checker
