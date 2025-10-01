@@ -64,10 +64,7 @@ The following checks confirm the CRUD permissions are functioning as intended:
 * ✅ A user can **delete** a post they created.
 * ✅ A user **cannot delete** a post created by another user (returns 403 error).
 
-
-
-
-
+## Comment Section
 
 ## 4. Commenting System Functionality and Permissions
 
