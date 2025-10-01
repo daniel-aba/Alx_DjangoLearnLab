@@ -63,3 +63,27 @@ The following checks confirm the CRUD permissions are functioning as intended:
 * ✅ A user **cannot update** a post created by another user (returns 403 error).
 * ✅ A user can **delete** a post they created.
 * ✅ A user **cannot delete** a post created by another user (returns 403 error).
+
+
+
+
+
+
+## 4. Commenting System Functionality and Permissions
+
+The comment system is deeply integrated into the post detail page and uses dedicated Class-Based Views (CBVs) for creation, updating, and deletion.
+
+### A. Comment Feature Summary
+
+| Operation | View Class | URL Pattern | Required Permission |
+| :--- | :--- | :--- | :--- |
+| **Read/Display** | `PostDetailView` | `/post/<int:pk>/` | Public |
+| **Create** | `CommentCreateView` | `/post/<int:pk>/comment/new/` | **Logged-In User** |
+| **Update** | `CommentUpdateView` | `/comment/<int:pk>/update/` | **Logged-In User** + **Author Only** |
+| **Delete** | `CommentDeleteView` | `/comment/<int:pk>/delete/` | **Logged-In User** + **Author Only** |
+
+### B. Implementation Notes
+
+1.  **Creation Logic:** The `CommentCreateView` is responsible for handling the form submission from the `post_detail.html`. It overrides `form_valid` to automatically link the comment to the parent `Post` (using the `pk` from the URL kwargs) and set the current logged-in user as the comment's `author`.
+2.  **Redirection:** All comment views (`Create`, `Update`, `Delete`) use the `get_success_url` method, utilizing `reverse_lazy`, to redirect the user back to the specific post's detail page immediately after the action is complete.
+3.  **Permissions:** The `CommentUpdateView` and `CommentDeleteView` utilize the **`LoginRequiredMixin`** and **`UserPassesTestMixin`** (with a `test_func` checking comment authorship) to ensure that users can only modify or delete comments they originally authored. The template logic in `post_detail.html` hides the Edit/Delete links from non-authors as an additional usability measure.
