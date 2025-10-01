@@ -8,12 +8,13 @@ class UserRegisterForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         fields = UserCreationForm.Meta.fields + ('email',)
 
-# ⬅️ NEW: Post ModelForm for creation and updating
+# ⬅️ NEW: Post ModelForm for creation and updating (UPDATED with tags)
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         # Exclude 'author' and 'published_date' as they are set automatically
-        fields = ['title', 'content']
+        # ⬅️ ADDED 'tags' field
+        fields = ['title', 'content', 'tags']
 
 
 class CommentForm(forms.ModelForm):
@@ -29,4 +30,4 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content']
 
-        # ⬅️ NEW: For new update
+    

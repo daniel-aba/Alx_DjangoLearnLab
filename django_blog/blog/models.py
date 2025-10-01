@@ -1,6 +1,7 @@
 from django.db import models
-# Import Django's User model (recommended way)
 from django.contrib.auth import get_user_model 
+from django.urls import reverse
+from taggit.managers import TaggableManager # ⬅️ NEW: Import Tag Manager
 
 User = get_user_model() 
 
@@ -10,11 +11,12 @@ class Post(models.Model):
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE) 
 
+    # ⬅️ NEW: Tags field
+    tags = TaggableManager() 
+
     def __str__(self):
         return self.title
 
-    # Optional: Define absolute URL for redirection after CRUD operations
-    from django.urls import reverse
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
 

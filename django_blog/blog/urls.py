@@ -5,7 +5,9 @@ from .views import (
     # ... existing Post CBVs ...
     PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView,
     # ⬅️ Comment CBVs
-    CommentCreateView, CommentUpdateView, CommentDeleteView
+    CommentCreateView, CommentUpdateView, CommentDeleteView,
+    # ⬅️ NEW: Search and Tag Views
+    TagPostListView, SearchResultsListView
 )
 
 urlpatterns = [
@@ -16,16 +18,14 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     
-    # ⬅️ FIXES: COMMENT CRUD URLs to match checker requirements
-    
-    # 1. Comment Creation (Must include /comments/new/ and use 'pk' for Post ID)
+    # Comment URLs
     path('post/<int:pk>/comments/new/', CommentCreateView.as_view(), name='comment-create'), 
-    
-    # 2. Comment Update (Must use 'comment/<int:pk>/update/')
     path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'), 
-    
-    # 3. Comment Delete (Must use 'comment/<int:pk>/delete/')
     path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
+
+    # ⬅️ NEW: Tagging and Search URLs
+    path('tag/<str:tag>/', TagPostListView.as_view(), name='posts-by-tag'),
+    path('search/', SearchResultsListView.as_view(), name='search-results'),
 
     # Authentication URLs 
     path('register/', views.register, name='register'),
