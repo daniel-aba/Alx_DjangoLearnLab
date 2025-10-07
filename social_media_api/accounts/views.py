@@ -13,8 +13,11 @@ from rest_framework.permissions import AllowAny
 def registration_view(request):
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
-        user = serializer.save()
-        token, created = Token.objects.get_or_create(user=user)
+        user = serializer.save() # This triggers the serializer's create method, which creates the user AND the token
+        
+        # The token has already been created, so we retrieve it to return it.
+        token = Token.objects.get(user=user) 
+        
         return Response({'token': token.key, 'username': user.username}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
