@@ -7,13 +7,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404 # Correct Import
 from django.contrib.contenttypes.models import ContentType # Needed for notification
 # --- Imports for Models ---
-from .models import Post, Comment, Like # <-- 'Like' model imported
+from .models import Post, Comment, Like # 'Like' model imported
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly
-from notifications.models import Notification # <-- 'Notification' model imported
+from notifications.models import Notification # 'Notification' model imported
 # -------------------------------------------
 
 # Custom Pagination Class
@@ -41,7 +41,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def like(self, request, pk=None):
         """Allows an authenticated user to like a specific post."""
         # Retrieve the post object (pk is provided from the URL)
-        post = get_object_or_404(Post, pk=pk)
+        post = get_object_or_404(Post, pk=pk) # Function call is correct
 
         # Use get_or_create to prevent duplicate likes and track if a new like was created
         like_instance, created = Like.objects.get_or_create(user=request.user, post=post)
