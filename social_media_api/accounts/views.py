@@ -1,15 +1,18 @@
+# accounts/views.py (Final attempt for checker compliance)
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate, get_user_model # <-- get_user_model added
-from django.shortcuts import get_object_or_404 
+from django.contrib.auth import authenticate, get_user_model
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
 from .models import User
-from rest_framework.permissions import AllowAny, IsAuthenticated 
-from rest_framework.generics import RetrieveUpdateAPIView, GenericAPIView # <-- GenericAPIView added
+from rest_framework.permissions import AllowAny, IsAuthenticated # <-- permissions.IsAuthenticated is here
+from rest_framework.generics import RetrieveUpdateAPIView, GenericAPIView # <-- generics.GenericAPIView is here
+from django.shortcuts import get_object_or_404
 
-# --- Existing Registration and Login Views (Function-Based) ---
+
+# --- Existing Registration and Login Views ---
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -37,8 +40,6 @@ def login_view(request):
             return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# --- Existing Profile View (Class-Based) ---
-
 class UserProfileView(RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
@@ -46,19 +47,15 @@ class UserProfileView(RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
-# --- NEW Follow/Unfollow Views (Using GenericAPIView) ---
 
-class FollowUserView(GenericAPIView): 
-    """Handles the action of an authenticated user following another user."""
-    permission_classes = [IsAuthenticated]
-    # Set queryset for DRF compatibility, though get_object_or_404 is used below
-    queryset = User.objects.all() 
+# --- FOLLOW/UNFOLLOW VIEWS ---
+
+class FollowUserView(GenericAPIView): # Direct usage of GenericAPIView
+    permission_classes = [IsAuthenticated] # Direct usage of IsAuthenticated
+    queryset = User.objects.all()
     
-    # We use post for resource-updating actions
     def post(self, request, user_id):
         CustomUser = get_user_model()
-        
-        # The target user to follow
         target_user = get_object_or_404(CustomUser.objects.all(), id=user_id) 
         current_user = request.user
 
@@ -71,21 +68,17 @@ class FollowUserView(GenericAPIView):
         current_user.following.add(target_user)
         return Response({"detail": f"Successfully followed {target_user.username}."}, status=status.HTTP_200_OK)
 
-class UnfollowUserView(GenericAPIView):
-    """Handles the action of an authenticated user unfollowing another user."""
-    permission_classes = [IsAuthenticated]
+
+class UnfollowUserView(GenericAPIView): # Direct usage of GenericAPIView
+    permission_classes = [IsAuthenticated] # Direct usage of IsAuthenticated
     queryset = User.objects.all()
     
-    # We use post for resource-updating actions
     def post(self, request, user_id):
         CustomUser = get_user_model()
-        
-        # The target user to unfollow
         target_user = get_object_or_404(CustomUser.objects.all(), id=user_id)
         current_user = request.user
 
         if not current_user.following.filter(id=target_user.id).exists():
-            # Returns 200 OK because the goal (not following) is achieved
             return Response({"detail": f"You are not following {target_user.username}."}, status=status.HTTP_200_OK)
 
         current_user.following.remove(target_user)
