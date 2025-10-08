@@ -1,12 +1,14 @@
-# accounts/views.py (in VS Code)
+# accounts/views.py (Updated)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
+# *** New Import: For 404 handling in follow/unfollow ***
+from django.shortcuts import get_object_or_404 
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
 from .models import User
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated # IsAuthenticated added
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -38,7 +40,6 @@ def login_view(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Simple profile view (for future use/testing)
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveUpdateAPIView
 
 class UserProfileView(RetrieveUpdateAPIView):
@@ -48,3 +49,41 @@ class UserProfileView(RetrieveUpdateAPIView):
     # Only allow authenticated users to see their own profile
     def get_object(self):
         return self.request.user
+
+# --- Social Endpoints ---
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def follow_user(request, user_id):
+    """Allows the authenticated user to follow another user by ID."""
+    # The user to be followed
+    target_user = get_object_or_404(User, id=user_id)
+    current_user = request.user
+
+    # Cannot follow self
+    if current_user.id == target_user.id:
+        return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if already following
+    if current_user.following.filter(id=target_user.id).exists():
+        return Response({"detail": f"You are already following {target_user.username}."}, status=status.HTTP_200_OK)
+
+    # Add the target user to the current user's 'following' list (ManyToManyField)
+    current_user.following.add(target_user)
+    return Response({"detail": f"Successfully followed {target_user.username}."}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def unfollow_user(request, user_id):
+    """Allows the authenticated user to unfollow another user by ID."""
+    # The user to be unfollowed
+    target_user = get_object_or_404(User, id=user_id)
+    current_user = request.user
+
+    # Check if currently following
+    if not current_user.following.filter(id=target_user.id).exists():
+        return Response({"detail": f"You are not following {target_user.username}."}, status=status.HTTP_200_OK)
+
+    # Remove the target user from the current user's 'following' list
+    current_user.following.remove(target_user)
+    return Response({"detail": f"Successfully unfollowed {target_user.username}."}, status=status.HTTP_200_OK)
